@@ -1,6 +1,13 @@
+body {
+    margin: 0;
+    padding: 0;
+}
+
 .container {
     display: flex;
     flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
 }
 
 .first-col, .customization-col, .graph-col {
