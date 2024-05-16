@@ -34,7 +34,7 @@ body {
 
 
 
-@media()  {
+@media(max-width: 780px)  {
     .container {
         flex-direction: row;
     }
