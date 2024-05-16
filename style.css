@@ -13,6 +13,7 @@ body {
 .first-col, .customization-col, .graph-col {
     border: 3px solid brown;
     border-radius: 10px;
+    box-shadow: 0 0 4px 4px rgba(0, 0, 0, 0.4);
     background-color: aliceblue;
     width: 400px;
     height: 400px;
