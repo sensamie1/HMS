@@ -3,20 +3,40 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-
+    <link rel="stylesheet" href="style.css">
     <title>Document</title>
 </head>
 <body>
     <main>
-        <div>
-            <h2>Staking Calculator</h2>
-            <p>Estimate your staking reward</p>
-            <div>
+        <div class="container">
+            <div class="heading">
+                <h2>Staking Calculator</h2>
+                <p>Estimate your staking reward</p>
+            </div>
+            <div class="sub-container">
                 <h3>Enter Staking Amount</h3>
-                <div>
+                <div class="amount-input">
                     <span>HMS</span>
                     <span>$</span>
                     <input type="text">
+                </div>
+                <div class="reward-summation">
+                    <div>
+                        <label for="">1d Earnings</label> <br />
+                        <div class="result-field"></div>
+                    </div>
+                    <div>
+                        <label for="">7d Earnings</label><br />
+                        <div class="result-field"></div>
+                    </div>
+                    <div>
+                        <label for="">30d Earnings</label> <br />
+                        <div class="result-field"></div>
+                    </div>
+                    <div>
+                        <label for="">365d Earnings</label> <br />
+                        <div class="result-field"></div>
+                    </div>
                 </div>
             </div>
         </div>
