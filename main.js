@@ -5,3 +5,7 @@ document.addEventListener('DOMContentLoaded', function () {
         toggleSwitch.classList.toggle('active');
     });
 });
+
+
+const dollarSign = document.getElementById('dollarSign');
+const hms = document.getElementById('hms');

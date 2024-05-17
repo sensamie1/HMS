@@ -108,3 +108,12 @@ p {
     align-items: center;
     margin-bottom: 20px;
 }
+
+
+#hms {
+    display: hidden;
+}
+
+#dollarSign {
+    display: hidden;
+}
