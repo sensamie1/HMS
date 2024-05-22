@@ -118,7 +118,7 @@
 
     function createResultHTMLHms(data) {
       return `
-        <h3>User Reward for ${data.userPeriodDays} Days</h3>
+        <h3>Reward for ${data.userPeriodDays} Days</h3>
         <ul>
           <li>Staked Amount: ${data.userStakedCoins.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })} HMS</li>
           <li>Current Price: $${data.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</li>
@@ -137,7 +137,7 @@
 
     function createResultHTMLUsd(data) {
       return `
-        <h3>User Reward for ${data.userPeriodDays} Days</h3>
+        <h3>Reward for ${data.userPeriodDays} Days</h3>
         <ul>
           <li>Staked Amount: $${parseFloat(data.userStakedUsd).toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })} (${data.userStakedCoins.toLocaleString(undefined, { minimumFractionDigits: 4, maximumFractionDigits: 4 })} HMS)</li>
           <li>Current Price: $${data.current_price.toLocaleString(undefined, { minimumFractionDigits: 2, maximumFractionDigits: 2 })}</li>

@@ -267,7 +267,7 @@ select:focus {
   .staking-info,
   .convert {
     width: 100%;
-    max-width: 500px;
+    max-width: 360px;
     margin: 10px 0;
   }
 
