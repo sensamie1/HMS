@@ -1,0 +1,136 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>HMS Staking Calculator</title>
+  <link rel="stylesheet" href="hms-styles.css">
+</head>
+<body>
+  <header>
+    <%- include('./partials/header'); %>
+  </header>
+
+  <div class="container1">
+    <div>
+      <h1>Stake HMS</h1>
+      <p>Contribute to network security & earn rewards.</p><br>
+      <div>
+        <a href="https://hemis.tech/buy-sell-hemis/" target="_blank">Get this asset</a>
+        <a href="https://hemis.tech/whitepaper/" target="_blank">White Paper</a>
+      </div>
+    </div>
+    <div>
+      <div>
+        <p>Price</p>
+        <p hidden><%= marketData.current_price.BTC %>BTC</p>
+        <p hidden><%= marketData.current_price.ETH %>ETH</p>
+        <p id="price-usd">$<%= marketData.current_price.USD %></p>
+      </div>
+      <div>
+        <p>Price Change 24h</p>
+        <p id="price-change-24h"><%= marketData.price_change_percentage_24h %></p>
+      </div>
+      <div>
+        <p>Market Cap</p>
+        <p id="market-cap">$<%= marketData.market_cap_USD %></p>
+      </div>
+      <div>
+        <p>Daily Volume</p>
+        <p id="daily-volume">$<%= marketData.daily_volume_24h_USD %></p>
+      </div>
+    </div>
+  </div>
+
+  <div class="container2">
+    <div class="staking-info">
+      <h3>HMS Staking</h3>
+      <p>
+        With the Hemis (HMS) staking data available, you can convert token prices, estimate your rewards, and explore reward options.
+      </p>
+      <a href="https://hemis.tech/about/" target="_blank" id="learn-more" >
+        <p id="learn-more" class="learn-more">
+          Learn more about HMS Staking
+        </p>
+      </a>
+    </div>
+    <div class="convert">
+      <h3>Convert HMS</h3>
+      <form id="conversion-form" onsubmit="return false;">
+        <div>
+          <label for="hms-amount" style="font-weight: bold;">HMS:</label>
+          <input type="number" id="hms-amount" name="hms-amount" step="1" min="0" max="9999999" placeholder="10000" oninput="handleHMSInput()" style="font-weight: bold;">
+        </div>
+        <div>
+          <label for="currency-amount" style="font-weight: bold;">Equivalent Value:</label>
+          <input type="text" id="currency-amount" name="currency-amount" maxlength="7" placeholder="0.00" oninput="convertCurrency()" style="font-weight: bold;">
+          <select id="currency-select" name="currency-select" onchange="updatePlaceholderAndConvert()" style="font-weight: bold;">
+            <option value="USD" style="font-weight: bold;">USD</option>
+            <option value="BTC" style="font-weight: bold;">BTC</option>
+            <option value="ETH" style="font-weight: bold;">ETH</option>
+          </select>
+        </div>
+      </form>
+    </div>
+  </div>
+  
+  <!-- Hidden inputs to store conversion rates -->
+  <input type="hidden" id="usd-rate" value="<%= marketData.current_price.USD %>">
+  <input type="hidden" id="btc-rate" value="<%= marketData.current_price.BTC %>">
+  <input type="hidden" id="eth-rate" value="<%= marketData.current_price.ETH %>">
+  
+  <div class="container3">
+    <div class="form-container">
+      <div class="form-box">
+        <h2>Hemis Staking Calculator HMS</h2>
+        <p><I>Calculate your rewards over time using the average interest rate. The industry average reward rate is <b>%<%= marketData.ROI %></b></I></p>
+        <form id="hms-form">
+          <label for="hms_amount" style="font-weight: bold;">HMS Amount:</label>
+          <input type="number" id="hms_amount" name="hms_amount" maxlength="7" placeholder="10000"  style="font-weight: bold;" required>
+          <label for="hms_period_days" style="font-weight: bold;">Period (Days):</label>
+          <input type="number" id="hms_period_days" name="period_days" maxlength="3" placeholder="365"  style="font-weight: bold;" required>
+          <button type="submit" style="font-weight: bold;">Calculate</button>
+        </form>
+        <div id="hms-result" class="result-box"></div>
+      </div>
+        <div class="form-box">
+          <h2>Hemis Staking Calculator USD</h2>
+          <p><I>Calculate your rewards over time using the average interest rate. The industry average reward rate is <b>%<%= marketData.ROI %></b></I></p>
+          <form id="usd-form">
+            <label for="usd_amount" style="font-weight: bold;">USD Amount:</label>
+            <input type="number" id="usd_amount" name="usd_amount" maxlength="7" placeholder="10000"  style="font-weight: bold;" required>
+            <label for="usd_period_days" style="font-weight: bold;">Period (Days):</label>
+            <input type="number" id="usd_period_days" name="period_days" maxlength="3" placeholder="365"  style="font-weight: bold;" required>
+            <button type="submit" style="font-weight: bold;">Calculate</button>
+          </form>
+          <div id="usd-result" class="result-box"></div>
+        </div>
+    </div>
+  </div>
+
+  <div class="contact-us">
+    <h2>Contact Us</h2>
+    <a href="https://twitter.com/hemisblockchain" target="_blank">
+      <img src="assets/twitter.png" alt="Twitter">
+    </a>
+    <a href="https://discord.gg/Gfc5mcwTkM" target="_blank">
+      <img src="assets/discord.webp" alt="Discord">
+    </a>
+    <a href="https://github.com/orgs/Hemis-blockchain/" target="_blank">
+      <img src="assets/github.png" alt="GitHub">
+    </a>
+    <a href="mailto:info@hemis.tech>" target="_blank">
+      <img src="assets/gmail.png" alt="Gmail">
+    </a>
+  </div>
+  
+  
+
+  <footer>
+    <%- include('./partials/footer'); %>
+  </footer>
+
+  <script src="script.js"></script>
+  
+</body>
+</html>
