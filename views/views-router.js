@@ -6,11 +6,21 @@ const router = express.Router();
 
 router.use(express.static('./views'));
 
+const hmsSupplyUrl = 'https://explorer.hemis.tech/ext/getmoneysupply';
 const url = 'https://api.coingecko.com/api/v3/coins/hemis';
 const options = {
   method: 'GET',
   headers: {accept: 'application/json', 'x-cg-demo-api-key': 'CG-yRLVZSTjfpp7LTookygo85VM'}
 };
+
+//CONSTANTS (1 block per min)
+const minPerHour = 60
+const hrPerDay = 24
+const daysPerYear = 365
+const annualBlocks = minPerHour * hrPerDay * daysPerYear
+
+const rewardsPerBlock = 5.34999999
+const annualRewards = annualBlocks * rewardsPerBlock
 
 
 // /hemis/staking-calculator (Staking page)
@@ -22,11 +32,23 @@ router.get('/staking-calculator', async (req, res) => {
     const usd = currentPrice.usd;
     const btc = currentPrice.btc;
     const eth = currentPrice.eth;
-    const marketCapUsd = json.market_data.market_cap.usd;
+    // const marketCapUsd = json.market_data.market_cap.usd;
     const dailyVolume24hUsd = json.market_data.total_volume.usd;
     let priceChangePercentage24h = json.market_data.price_change_percentage_24h;
-    const totalSupply = json.market_data.total_supply;
-    const apy = 50.91
+    // const totalSupply = json.market_data.total_supply;
+
+    // Fetch total supply from Hemis explorer
+    const totalSupplyResponse = await fetch(hmsSupplyUrl);
+    const totalSupply = await totalSupplyResponse.text(); // Get the response as text
+
+    // Parse total supply as float
+    const totalSupplyFloat = parseFloat(totalSupply);
+
+    // Calculate total market cap
+    const marketCapUsd = usd * totalSupplyFloat;
+    
+    // Calculate apy
+    const apy = (annualRewards / totalSupplyFloat) * 100;
 
 
     // Add positive/negative sign and percentage symbol
@@ -40,11 +62,11 @@ router.get('/staking-calculator', async (req, res) => {
         BTC: btc,
         ETH: eth
       },
-      market_cap_USD: marketCapUsd,
+      market_cap_USD: marketCapUsd.toFixed(2),
       daily_volume_24h_USD: dailyVolume24hUsd,
       price_change_percentage_24h: priceChangePercentage24h,
       total_supply: totalSupply,
-      ROI: apy
+      ROI: apy.toFixed(2)
     };
     console.log(selectedMarketData);
     res.render('hms-staking', { marketData: selectedMarketData });
@@ -60,7 +82,17 @@ router.post('/staking-calculate/hms', async (req, res) => {
     const response = await fetch(url, options);
     const json = await response.json();
     const currentPrice = json.market_data.current_price.usd;
-    const apy = 50.91
+
+    // Fetch total supply from Hemis explorer
+    const totalSupplyResponse = await fetch(hmsSupplyUrl);
+    const totalSupply = await totalSupplyResponse.text(); // Get the response as text
+
+    // Parse total supply as float
+    const totalSupplyFloat = parseFloat(totalSupply);
+
+    // Calculate apy
+    const apy = (annualRewards / totalSupplyFloat) * 100;
+
     const dailyRate = Math.pow(1 + apy / 100, 1 / 365) - 1;
 
     const userStakedCoins = parseFloat(req.body.hms_amount);
@@ -89,7 +121,7 @@ router.post('/staking-calculate/hms', async (req, res) => {
         days90Reward: reward90Days,
         days365Reward: reward365Days,
       },
-      ROI: apy
+      ROI: apy.toFixed(2)
     };
 
     res.status(200).json({
@@ -112,7 +144,17 @@ router.post('/staking-calculate/usd', async (req, res) => {
     const response = await fetch(url, options);
     const json = await response.json();
     const currentPrice = json.market_data.current_price.usd;
-    const apy = 50.91
+
+    // Fetch total supply from Hemis explorer
+    const totalSupplyResponse = await fetch(hmsSupplyUrl);
+    const totalSupply = await totalSupplyResponse.text(); // Get the response as text
+
+    // Parse total supply as float
+    const totalSupplyFloat = parseFloat(totalSupply);
+
+    // Calculate apy
+    const apy = (annualRewards / totalSupplyFloat) * 100;
+
     const dailyRate = Math.pow(1 + apy / 100, 1 / 365) - 1;
     const userStakedUsd = parseFloat(req.body.usd_amount)
 
@@ -143,7 +185,7 @@ router.post('/staking-calculate/usd', async (req, res) => {
         days90Reward: reward90Days,
         days365Reward: reward365Days,
       },
-      ROI: apy
+      ROI: apy.toFixed(2)
     };
 
     res.status(200).json({

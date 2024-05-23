@@ -23,6 +23,7 @@ app.get('/', (req, res) => {
   return res.status(200).json({ message: 'success', status: true })
 })
 
+const hmsSupplyUrl = 'https://explorer.hemis.tech/ext/getmoneysupply';
 const url2 = 'https://api.coingecko.com/api/v3/coins/bitcoin';
 const url = 'https://api.coingecko.com/api/v3/coins/hemis';
 const options = {
@@ -31,7 +32,7 @@ const options = {
 };
 
 //Hemis Entire Data
-app.get('/hemis', async (req, res) => {
+app.get('/hms', async (req, res) => {
   try {
     const response = await fetch(url, options)
     const json = await response.json();
@@ -51,7 +52,7 @@ app.get('/hemis', async (req, res) => {
 })
 
 //Hemis Market Data
-app.get('/hemis/market-data', async (req, res) => {
+app.get('/hms/market-data', async (req, res) => {
   try {
     const response = await fetch(url, options)
     const json = await response.json();
@@ -72,7 +73,7 @@ app.get('/hemis/market-data', async (req, res) => {
 })
 
 //Hemis Current Price
-app.get('/hemis/market-data/current-price', async (req, res) => {
+app.get('/hms/market-data/current-price', async (req, res) => {
   try {
     const response = await fetch(url, options)
     const json = await response.json();
@@ -101,7 +102,7 @@ app.get('/hemis/market-data/current-price', async (req, res) => {
 })
 
 //Hemis Selected Market Data
-app.get('/hemis/market', async (req, res) => {
+app.get('/hms/market', async (req, res) => {
   try {
     const response = await fetch(url, options)
     const json = await response.json();
@@ -109,10 +110,19 @@ app.get('/hemis/market', async (req, res) => {
     const usd = currentPrice.usd
     const btc = currentPrice.btc
     const eth = currentPrice.eth
-    const marketCapUsd =  json.market_data.market_cap.usd
+    // const marketCapUsd =  json.market_data.market_cap.usd
     const dailyVolume24hUsd =  json.market_data.total_volume.usd
     let priceChangePercentage24h =  json.market_data.price_change_percentage_24h
-    const totalSupply = json.market_data.total_supply
+    // const totalSupply = json.market_data.total_supply
+    // Fetch total supply from Hemis explorer
+    const totalSupplyResponse = await fetch(hmsSupplyUrl);
+    const totalSupply = await totalSupplyResponse.text(); // Get the response as text
+
+    // Parse total supply as float
+    const totalSupplyFloat = parseFloat(totalSupply);
+
+    // Calculate total market cap
+    const marketCapUsd = usd * totalSupplyFloat;
 
     // Add positive/negative sign and percentage symbol
     priceChangePercentage24h = priceChangePercentage24h >= 0 
@@ -128,7 +138,7 @@ app.get('/hemis/market', async (req, res) => {
       market_cap_USD: marketCapUsd,
       daily_volume_24h_USD: dailyVolume24hUsd,
       price_change_percentage_24h: priceChangePercentage24h,
-      total_supply: totalSupply
+      total_supply: totalSupplyFloat,
     }
     console.log(selectedMarketData);
     return res.status(200).json({
@@ -146,23 +156,32 @@ app.get('/hemis/market', async (req, res) => {
 })
 
 //CONSTANTS (1 block per min)
-// const minPerHour = 60
-// const hrPerDay = 24
-// const daysPerYear = 365
-// const annualBlocks = minPerHour * hrPerDay * daysPerYear
+const minPerHour = 60
+const hrPerDay = 24
+const daysPerYear = 365
+const annualBlocks = minPerHour * hrPerDay * daysPerYear
 
-// const rewardsPerBlock = 5
-// const annualRewards = annualBlocks * rewardsPerBlock
+const rewardsPerBlock = 5.34999999
+const annualRewards = annualBlocks * rewardsPerBlock
 
 
 
 //Hemis Staking Calculate hms
-app.post('/hemis/staking/calculate/hms', async (req, res) => {
+app.post('/hms/staking/calculate/hms', async (req, res) => {
   try {
     const response = await fetch(url, options);
     const json = await response.json();
     const currentPrice = json.market_data.current_price.usd;
-    const apy = 50.91
+
+    // Fetch total supply from Hemis explorer
+    const totalSupplyResponse = await fetch(hmsSupplyUrl);
+    const totalSupply = await totalSupplyResponse.text(); // Get the response as text
+
+    // Parse total supply as float
+    const totalSupplyFloat = parseFloat(totalSupply);
+
+    // Calculate apy
+    const apy = (annualRewards / totalSupplyFloat) * 100;
     const dailyRate = Math.pow(1 + apy / 100, 1 / 365) - 1;
 
     const userStakedCoins = parseFloat(req.body.hms_amount);
@@ -190,7 +209,7 @@ app.post('/hemis/staking/calculate/hms', async (req, res) => {
         '90_days_reward (HMS)': reward90Days,
         '365_days_reward (HMS)': reward365Days,
       },
-      'ROI (%)': apy
+      'ROI (%)': parseFloat(apy.toFixed(2))
     };
 
     return res.status(200).json({
@@ -208,12 +227,21 @@ app.post('/hemis/staking/calculate/hms', async (req, res) => {
 });
 
 //Hemis Staking Calculate USD
-app.post('/hemis/staking/calculate/usd', async (req, res) => {
+app.post('/hms/staking/calculate/usd', async (req, res) => {
   try {
     const response = await fetch(url, options);
     const json = await response.json();
     const currentPrice = json.market_data.current_price.usd;
-    const apy = 50.91
+
+    // Fetch total supply from Hemis explorer
+    const totalSupplyResponse = await fetch(hmsSupplyUrl);
+    const totalSupply = await totalSupplyResponse.text(); // Get the response as text
+
+    // Parse total supply as float
+    const totalSupplyFloat = parseFloat(totalSupply);
+
+    // Calculate apy
+    const apy = (annualRewards / totalSupplyFloat) * 100;
     const dailyRate = Math.pow(1 + apy / 100, 1 / 365) - 1;
     const userStakedUsd = req.body.usd_amount
 
@@ -244,7 +272,7 @@ app.post('/hemis/staking/calculate/usd', async (req, res) => {
         '90_days_reward ($)': reward90Days,
         '365_days_reward ($)': reward365Days
       },
-      'ROI (%)': apy
+      'ROI (%)': parseFloat(apy.toFixed(2))
     };
 
     return res.status(200).json({
